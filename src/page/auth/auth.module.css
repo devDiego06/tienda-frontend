@@ -1,0 +1,876 @@
+/* ── FONTS ── */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
+
+/* ── TOKENS ── */
+:root {
+  --tb-bg: #0a0a0a;
+  --tb-bg2: #111111;
+  --tb-bg3: #1a1a1a;
+  --tb-border: #252525;
+  --tb-border2: #333333;
+  --tb-lime: #c8f135;
+  --tb-lime2: #a8d820;
+  --tb-lime-dim: rgba(200, 241, 53, 0.08);
+  --tb-lime-ring: rgba(200, 241, 53, 0.1);
+  --tb-lime-bdr: rgba(200, 241, 53, 0.2);
+  --tb-text: #f0f0f0;
+  --tb-muted: #666666;
+  --tb-muted2: #444444;
+  --tb-red: #ff4d4d;
+  --tb-red-bg: rgba(255, 77, 77, 0.1);
+  --tb-red-bdr: rgba(255, 77, 77, 0.25);
+  --tb-amber: #f5a623;
+  --tb-blue: #4a9eff;
+}
+
+/* ── RESET ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── CANVAS + NOISE ── */
+.tbCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.tbNoise {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.035;
+  pointer-events: none;
+}
+
+/* ── PAGE SHELL ── */
+.tbPage {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 72px 16px 24px;
+  font-family: 'Syne', sans-serif;
+  background: var(--tb-bg);
+  color: var(--tb-text);
+}
+
+/* ── TOPBAR ── */
+.tbTopbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  z-index: 10;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(10, 10, 10, 0.6);
+  backdrop-filter: blur(12px);
+}
+
+.tbLogo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--tb-text);
+  text-decoration: none;
+}
+
+.tbLogoIcon {
+  width: 30px;
+  height: 30px;
+  background: var(--tb-lime);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0a0a0a;
+}
+
+.tbTopbarRight {
+  font-size: 13px;
+  color: var(--tb-muted);
+}
+
+.tbTopbarRight a {
+  color: var(--tb-lime);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.tbTopbarRight a:hover {
+  text-decoration: underline;
+}
+
+/* ── CARD ── */
+.tbCard {
+  position: relative;
+  overflow: hidden;
+  background: rgba(17, 17, 17, 0.78);
+  border: 1px solid var(--tb-border2);
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  width: 100%;
+}
+
+.tbCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--tb-lime), transparent);
+  opacity: 0.6;
+}
+
+/* ── BADGE ── */
+.tbBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--tb-lime-dim);
+  border: 1px solid var(--tb-lime-bdr);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tb-lime);
+  letter-spacing: 0.3px;
+  margin-bottom: 20px;
+}
+
+.tbBadgeDot {
+  width: 6px;
+  height: 6px;
+  background: var(--tb-lime);
+  border-radius: 50%;
+  animation: tbPulse 1.8s infinite;
+}
+
+@keyframes tbPulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+}
+
+/* ── TITLE ── */
+.tbTitle {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.tbTitle span {
+  color: var(--tb-lime);
+}
+
+.tbSub {
+  font-size: 13px;
+  color: var(--tb-muted);
+  font-weight: 400;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+/* ── PROGRESS DOTS (login) ── */
+.tbDots {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.tbDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--tb-muted2);
+  transition: all 0.3s ease;
+}
+
+.tbDot.tbDotOn {
+  background: var(--tb-lime);
+  width: 18px;
+  border-radius: 3px;
+}
+
+/* ── STEP ANIMATION ── */
+.tbStepEnter {
+  animation: tbFadeUp 0.35s ease forwards;
+}
+
+@keyframes tbFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── ERROR BANNER ── */
+.tbError {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--tb-red-bg);
+  border: 1px solid var(--tb-red-bdr);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--tb-red);
+  margin-bottom: 14px;
+}
+
+.tbError svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* ── INPUT ── */
+.tbInputGroup {
+  margin-bottom: 14px;
+}
+
+.tbInputLabel {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tb-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+
+.tbInputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.tbInputIcon {
+  position: absolute;
+  left: 14px;
+  color: var(--tb-muted);
+  pointer-events: none;
+  display: flex;
+}
+
+.tbInputIcon svg {
+  width: 15px;
+  height: 15px;
+}
+
+.tbField {
+  width: 100%;
+  background: var(--tb-bg3);
+  border: 1px solid var(--tb-border2);
+  border-radius: 12px;
+  padding: 13px 14px 13px 42px;
+  font-size: 14px;
+  font-family: 'Syne', sans-serif;
+  color: var(--tb-text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.tbField::placeholder {
+  color: var(--tb-muted2);
+}
+
+.tbField:focus {
+  border-color: var(--tb-lime);
+  box-shadow: 0 0 0 3px var(--tb-lime-ring);
+}
+
+.tbFieldNoIcon {
+  padding-left: 14px;
+}
+
+.tbFieldRight {
+  padding-right: 44px;
+}
+
+.tbEyeBtn {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  color: var(--tb-muted);
+  cursor: pointer;
+  display: flex;
+  padding: 4px;
+  border-radius: 6px;
+  transition: color 0.15s;
+}
+
+.tbEyeBtn:hover {
+  color: var(--tb-text);
+}
+
+.tbEyeBtn svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ── STRENGTH BAR ── */
+.tbStrengthBar {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--tb-border2);
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.tbStrengthFill {
+  height: 100%;
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.3s, background 0.3s;
+}
+
+.tbStrengthLabel {
+  font-size: 11px;
+  color: var(--tb-muted);
+  margin-top: 5px;
+}
+
+/* ── MATCH INDICATOR ── */
+.tbMatchRow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  margin-top: 6px;
+}
+
+.tbMatchRow svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* ── EMAIL CHIP ── */
+.tbChip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--tb-bg3);
+  border: 1px solid var(--tb-border2);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+
+.tbChipIcon {
+  color: var(--tb-lime);
+  flex-shrink: 0;
+}
+
+.tbChipIcon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.tbChipLabel {
+  font-size: 10px;
+  color: var(--tb-muted);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.tbChipVal {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--tb-text);
+}
+
+.tbChipChange {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tb-lime);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: 'Syne', sans-serif;
+}
+
+.tbChipChange:hover {
+  text-decoration: underline;
+}
+
+/* ── BUTTONS ── */
+.tbBtnPrimary {
+  width: 100%;
+  background: var(--tb-lime);
+  color: #0a0a0a;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Syne', sans-serif;
+  letter-spacing: -0.2px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.tbBtnPrimary:hover {
+  background: var(--tb-lime2);
+  box-shadow: 0 4px 20px rgba(200, 241, 53, 0.25);
+}
+
+.tbBtnPrimary:active {
+  transform: scale(0.98);
+}
+
+.tbBtnPrimary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.tbBtnPrimary svg {
+  width: 16px;
+  height: 16px;
+}
+
+.tbBtnBack {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--tb-muted);
+  cursor: pointer;
+  margin-top: 14px;
+  transition: color 0.15s;
+}
+
+.tbBtnBack:hover {
+  color: var(--tb-text);
+}
+
+.tbBtnBack svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ── SPINNER ── */
+.tbSpinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-top-color: #0a0a0a;
+  border-radius: 50%;
+  animation: tbSpin 0.7s linear infinite;
+}
+
+@keyframes tbSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── DIVIDER ── */
+.tbDivider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.tbDivider hr {
+  flex: 1;
+  border: none;
+  border-top: 1px solid var(--tb-border2);
+}
+
+.tbDivider span {
+  font-size: 11px;
+  color: var(--tb-muted);
+  font-weight: 600;
+}
+
+/* ── SOCIAL ── */
+.tbSocialRow {
+  display: flex;
+  gap: 10px;
+}
+
+.tbBtnSocial {
+  flex: 1;
+  background: var(--tb-bg3);
+  border: 1px solid var(--tb-border2);
+  border-radius: 12px;
+  padding: 11px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Syne', sans-serif;
+  color: var(--tb-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.tbBtnSocial:hover {
+  border-color: var(--tb-border);
+  background: #1f1f1f;
+}
+
+.tbBtnSocial svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── SUCCESS ── */
+.tbSuccess {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 10px 0;
+  animation: tbFadeUp 0.4s ease forwards;
+}
+
+.tbSuccessIcon {
+  width: 64px;
+  height: 64px;
+  background: var(--tb-lime-dim);
+  border: 2px solid var(--tb-lime-bdr);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.tbSuccessIcon svg {
+  width: 30px;
+  height: 30px;
+  color: var(--tb-lime);
+}
+
+.tbSuccessTitle {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+
+.tbSuccessSub {
+  font-size: 13px;
+  color: var(--tb-muted);
+  line-height: 1.5;
+}
+
+.tbJwtTag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  background: var(--tb-bg3);
+  border: 1px solid var(--tb-border);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--tb-muted);
+}
+
+.tbJwtDot {
+  width: 6px;
+  height: 6px;
+  background: var(--tb-blue);
+  border-radius: 50%;
+  animation: tbPulse 1.8s infinite;
+}
+
+/* ── FOOTER ── */
+.tbFooter {
+  margin-top: 20px;
+  font-size: 11px;
+  color: var(--tb-muted);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.tbFooter a {
+  color: var(--tb-lime);
+  text-decoration: none;
+}
+
+.tbFooter a:hover {
+  text-decoration: underline;
+}
+
+.tbMono {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--tb-muted2);
+}
+
+/* ── REGISTER SPECIFIC ── */
+.tbStepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 24px;
+}
+
+.tbStepNode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.tbStepCircle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--tb-border2);
+  background: var(--tb-bg3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--tb-muted);
+  transition: all 0.3s;
+  position: relative;
+  z-index: 1;
+}
+
+.tbStepCircle svg {
+  width: 12px;
+  height: 12px;
+}
+
+.tbStepCircleDone {
+  background: var(--tb-lime);
+  border-color: var(--tb-lime);
+  color: #0a0a0a;
+}
+
+.tbStepCircleActive {
+  border-color: var(--tb-lime);
+  color: var(--tb-lime);
+  background: var(--tb-lime-dim);
+}
+
+.tbStepLabel {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--tb-muted);
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+  transition: color 0.3s;
+}
+
+.tbStepLabelActive {
+  color: var(--tb-lime);
+}
+
+.tbStepLabelDone {
+  color: var(--tb-lime2);
+}
+
+.tbStepLine {
+  flex: 1;
+  height: 2px;
+  background: var(--tb-border2);
+  margin: 0 4px;
+  margin-bottom: 18px;
+  transition: background 0.3s;
+}
+
+.tbStepLineDone {
+  background: var(--tb-lime);
+}
+
+.tbRoleGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.tbRoleCard {
+  background: var(--tb-bg3);
+  border: 2px solid var(--tb-border2);
+  border-radius: 12px;
+  padding: 14px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.tbRoleCard:hover {
+  border-color: var(--tb-border);
+}
+
+.tbRoleCardSelected {
+  border-color: var(--tb-lime);
+  background: var(--tb-lime-dim);
+}
+
+.tbRoleIcon {
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+
+.tbRoleName {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.tbRoleNameSelected {
+  color: var(--tb-lime);
+}
+
+.tbRoleDesc {
+  font-size: 11px;
+  color: var(--tb-muted);
+  line-height: 1.4;
+}
+
+.tbDeliveryGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.tbDeliveryCard {
+  background: var(--tb-bg3);
+  border: 2px solid var(--tb-border2);
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tbDeliveryCard:hover {
+  border-color: var(--tb-border);
+}
+
+.tbDeliveryCardSelected {
+  border-color: var(--tb-lime);
+  background: var(--tb-lime-dim);
+}
+
+.tbDeliveryEmoji {
+  font-size: 20px;
+}
+
+.tbDeliveryName {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tbDeliveryNameSelected {
+  color: var(--tb-lime);
+}
+
+.tbDeliverySub {
+  font-size: 10px;
+  color: var(--tb-muted);
+}
+
+.tbTwoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.tbTermsRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+  cursor: pointer;
+}
+
+.tbCheckbox {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border: 2px solid var(--tb-border2);
+  border-radius: 5px;
+  background: var(--tb-bg3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  transition: all 0.2s;
+}
+
+.tbCheckboxChecked {
+  background: var(--tb-lime);
+  border-color: var(--tb-lime);
+}
+
+.tbCheckbox svg {
+  width: 10px;
+  height: 10px;
+  color: #0a0a0a;
+}
+
+.tbTermsText {
+  font-size: 12px;
+  color: var(--tb-muted);
+  line-height: 1.5;
+}
+
+.tbTermsText a {
+  color: var(--tb-lime);
+  text-decoration: none;
+}
