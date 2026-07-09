@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { getPasswordStrength, launchParticles } from './auth.utils'
 import s from './auth.module.css'
 import { Logo, PhoneIcon } from './auth.components'
@@ -10,8 +10,9 @@ import { LockIcon } from './auth.components'
 import { AlertIcon } from './auth.components'
 import { CheckIcon } from './auth.components'
 import { GradientBackground } from './auth.components'
-import { router } from '../../router'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { authApi } from '../../api/auth'
+import { useAuthStore } from '../../store/Auth.store'
 
 type LoginStep = 'phone' | 'password'
 
@@ -28,7 +29,9 @@ export default function LoginPage() {
   const [phoneError, setPhoneError] = useState(false)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
+  const setAuth = useAuthStore(state => state.setAuth)
 
   const passwordRef = useRef<HTMLInputElement>(null)
   const strength = getPasswordStrength(form.password)
@@ -59,30 +62,41 @@ export default function LoginPage() {
   function handleContinue() {
     if (!isPhoneValid()) { setPhoneError(true); return }
     setPhoneError(false)
+    setError(null)
     setStep('password')
   }
 
-  function handleLogin() {
+  async function handleLogin() {
     if (form.password.length < 6) { setPasswordError(true); return }
     setPasswordError(false)
+    setError(null)
     setLoading(true)
     // TODO: replace with real API call
     // authApi.login({ identifier: form.identifier, password: form.password })
+    try {
+      const response = await authApi.login(form)
+      setAuth(response.token, { userId: response.userId, name: response.name, role: response.role })
 
-    setTimeout(() => {
+      setTimeout(() => {
+        setLoading(false)
+        setSuccess(true)
+        launchParticles()
+      }, 1400)
+    } catch (err: any) {
       setLoading(false)
-      setSuccess(true)
-      launchParticles()
+      console.error(err)
+      const msg = err.response?.data?.message || err.message || 'Error al iniciar sesión'
+      setError(msg)
+    }
 
-    }, 1400)
 
-    setTimeout(() => navigate("/register"), 3000)
   }
 
   function handleBack() {
     setStep('phone')
     setForm(f => ({ ...f, password: '' }))
     setPasswordError(false)
+    setError(null)
   }
 
   return (
@@ -127,6 +141,13 @@ export default function LoginPage() {
                 <div className={`${s.tbDot} ${step === 'phone' ? s.tbDotOn : ''}`} />
                 <div className={`${s.tbDot} ${step === 'password' ? s.tbDotOn : ''}`} />
               </div>
+
+              {/* ERROR GENERAL */}
+              {error && (
+                <div className={s.tbError}>
+                  <AlertIcon /> {error}
+                </div>
+              )}
 
               {/* ── STEP: PHONE ── */}
               {step === 'phone' && (

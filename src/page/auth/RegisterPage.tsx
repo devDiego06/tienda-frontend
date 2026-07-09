@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Fragment } from 'react'
 import s from './auth.module.css'
 import {
   GradientBackground, Logo, EyeIcon, ArrowRightIcon,
@@ -6,14 +6,16 @@ import {
   AlertIcon, CheckIcon
 } from './auth.components'
 import { getPasswordStrength, launchParticles } from './auth.utils'
-import type { Role } from './auth.types'
+import { authApi } from '../../api/auth'
+
+type Role = 'CUSTOMER' | 'ADMIN'
 
 type Step = 1 | 2 | 3
 
 interface RegisterForm {
   phone: string
   password: string
-  confirmPassword?: string
+  confirmPassword: string
   name: string
   address: string
   role: Role
@@ -32,7 +34,7 @@ function Stepper({ current }: { current: Step }) {
         const done = current > st.n
         const active = current === st.n
         return (
-          <React.Fragment key={st.n}>
+          <Fragment key={st.n}>
             <div className={s.tbStepNode}>
               <div className={`${s.tbStepCircle} ${done ? s.tbStepCircleDone : ''} ${active ? s.tbStepCircleActive : ''}`}>
                 {done ? <CheckIcon /> : st.n}
@@ -44,7 +46,7 @@ function Stepper({ current }: { current: Step }) {
             {i < steps.length - 1 && (
               <div className={`${s.tbStepLine} ${current > st.n ? s.tbStepLineDone : ''}`} />
             )}
-          </React.Fragment>
+          </Fragment>
         )
       })}
     </div>
@@ -99,7 +101,7 @@ export default function RegisterPage() {
   function handleStep1() {
     const phoneOk = /^3\d{9}$/.test(form.phone)
     if (!phoneOk) {
-      setError('Ingresa un correo válido o un celular de 10 dígitos.')
+      setError('Ingresa un celular de 10 dígitos.')
       return
     }
     setError('')
@@ -121,26 +123,38 @@ export default function RegisterPage() {
   }
 
   /* ── STEP 3 / final submit ── */
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!form.name.trim()) {
       setError('Por favor ingresa tu nombre.')
       return
     }
 
+    //sacar del form lo que no se necesita para enviar al backend
     const { confirmPassword, role, ...body } = form
 
-
-    setError('')
     setLoading(true)
-    // TODO: replace with real API call
-    // authApi.register({ ...form })
-    setTimeout(() => {
-      setLoading(false)
-      setSuccess(true)
-      launchParticles()
-    }, 1600)
-    console.log('este es el form', form);
+    try {
+      const response = await authApi.register(body)
+      console.log(response);
 
+      if (response && response.token) {
+        localStorage.setItem('token', response.token)
+        localStorage.setItem('user', JSON.stringify(response))
+        window.location.href = '/'
+      } else {
+        setError('Error al registrar usuario')
+      }
+      setTimeout(() => {
+        setLoading(false)
+        setSuccess(true)
+        launchParticles()
+      }, 1600)
+    } catch (err: any) {
+      setLoading(false)
+      console.error(err)
+      const msg = err.response?.data?.message || err.message || 'Error al registrar usuario'
+      setError(msg)
+    }
   }
 
   function goBack() {

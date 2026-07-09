@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import s from './auth.module.css'
 import { NOISE_SVG, initCanvasBlobs } from './auth.utils'
 

@@ -1,31 +1,36 @@
 import axios from "axios";
+import { getAuthToken } from "../store/Auth.store";
 
-const api = axios.create({
+const client = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
-    timeout: 5000,
     headers: {
         "Content-Type": "application/json",
     },
+    timeout: 10000
 })
 
-api.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            config.headers["Authorization"] = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => {
-        throw error
-    }
-)
+//REQUEST: inyecta el JWT en cada llamada
+client.interceptors.request.use((config) => {
+    const token = getAuthToken()
+    if(token) config.headers.Authorization = `Bearer ${token}`
+    return config
+})
 
-api.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        throw error
-    }
-)
+//RESPONSE: manejo de errores globales
+client.interceptors.response.use((response) => response, (error) => {
+    const status = error.response?.status
 
-export default api;
+    if(status === 401) {
+        localStorage.removeItem('token')
+        window.location.href = '/login'
+    }
+
+    if(status === 403) {
+       window.location.href = '/unauthorized'
+    }
+
+    return Promise.reject(error)
+})
+
+
+export default client;
