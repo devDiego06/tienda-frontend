@@ -21,9 +21,11 @@ export default function Sidebar({ onNewProduct }: SidebarProps) {
     const location = useLocation();
     const isActive = (path: string) => location.pathname === path;
     const { clearAuth } = useAuthStore()
+    const navigate = useNavigate();
 
     const handleLogout = () => {
         clearAuth();
+        navigate('/login', { replace: true });
     }
 
     return (
@@ -80,13 +82,14 @@ export default function Sidebar({ onNewProduct }: SidebarProps) {
             )}
 
             <div className="mt-auto border-t border-outline-variant/10 pt-4 flex flex-col gap-2">
-                <a
-                    className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-error transition-colors rounded-lg"
+                <button
+                    type="button"
+                    className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-error transition-colors rounded-lg text-left"
                     onClick={handleLogout}
                 >
                     <span className="material-symbols-outlined">logout</span>
-                    <span onClick={handleLogout} className="text-label-md">Salir</span>
-                </a>
+                    <span className="text-label-md">Salir</span>
+                </button>
             </div>
         </aside>
     );

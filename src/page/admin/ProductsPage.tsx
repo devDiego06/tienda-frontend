@@ -1,38 +1,71 @@
-import type { Product } from '../../types';
+import { useEffect, useMemo, useState } from 'react';
+import { productsApi } from '../../api/productos/products.api';
 import { Toggle } from '../../components/ui/Toggle';
 import EditProductModal from '../../components/products/EditProductModal';
-import { useState } from 'react';
+import type { Product } from '../../types';
 
-const products: Product[] = [
-    {
-        id: '#INV-001',
-        name: 'Arroz Premium 1kg',
-        category: 'Granos',
-        price: '$4.500 COP',
-        status: true,
-        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBvhndVXE3hemKYjtv0vDSN4Oe_AGb_HI4qKgOwzXh60JZDVJtWoefKNYUIupXqR0ct15qFop3FITXP7BGHr-NKzkfd7Av6OQSpUEUogdFk_Vi_pbUe7kHxmjDX0CI5D6jVOdS2UY5MEMQItVm707beUDLkR73LyH14KjK5r_MmhXcOZUsmdT3SSv_W3htFo_FPq5QU9glFvsAu6ASWceQ8bwADB82KjvU3y40Kux28dplLqF4u3PZfaYJK_9CVyTcGym6Otatj3s0',
-    },
-    {
-        id: '#INV-042',
-        name: 'Leche Entera 1L',
-        category: 'Lácteos',
-        price: '$3.200 COP',
-        status: false,
-        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD8HNQF3z_Qz6po7LxTbkNkfVwm4rRoJmFZ1MwX1-bs9WJOEvW9zqAAkRNVithJGCe4u1FXUoTLqqlQI_gqoM3-lr-gnLMDLrtSSPe_FkaZ1jt5UuHmseUmJEvf9rWiuS3sbr183V_sU6viCzAkq4d6QZamRbyN78WXGTjoyqyBmlzGEzl0iiAsOpRzpAwyYe4XwcLhbS3hBFEkkEfKLrX6feOXH9iZuFTzW6D0r4EtEhYhU5PjcTSbgChLgb0q6ohKhjWGXFqIbYY',
-    },
-    {
-        id: '#INV-089',
-        name: 'Detergente Líquido',
-        category: 'Aseo',
-        price: '$12.900 COP',
-        status: true,
-        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBF0Wm75yCw8VwOSIg3q8Xx71liQ4HxTmotVa-QgTzZra4ItRPRXy_HjgjtL0UezlRX5iev5x8VuNh0k6zGZznHiNzhC7fkry8JwmJlEtbs6pNeRCG3kUAKob6hfKkejumlKQccVzyumKUOJ3deYTsKw1HxNlsPeR4lwUasY0h4Vs4qamsJ5ex90n8JAVbBaHhM5iWw7w08NTmTewSkZO0UcuMfrbRk2A5yw46fLXLow-T2tyq1XDcCLfPqT3RiPHqv9iPDXrXgZvc',
-    },
-];
+const moneyFormatter = new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    maximumFractionDigits: 0,
+});
+
+const STORE_ID = import.meta.env.VITE_STORE_ID;
 
 export default function ProductsPage() {
-
     const [isOpen, setIsOpen] = useState(false);
+    const [products, setProducts] = useState<Product[]>([]);
+    const [query, setQuery] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        async function loadProducts() {
+            try {
+                setLoading(true);
+                setError(null);
+                const data = await productsApi.getByStore(STORE_ID);
+
+                if (!cancelled) {
+                    setProducts(data);
+                }
+            } catch (requestError: any) {
+                if (!cancelled) {
+                    setError(requestError?.message ?? 'No se pudieron cargar los productos');
+                }
+            } finally {
+                if (!cancelled) {
+                    setLoading(false);
+                }
+            }
+        }
+
+        loadProducts();
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
+    const filteredProducts = useMemo(() => {
+        const normalizedQuery = query.trim().toLowerCase();
+
+        if (!normalizedQuery) {
+            return products;
+        }
+
+        return products.filter((product) => {
+            return [product.name, product.category, product.description]
+                .filter(Boolean)
+                .some((value) => value.toLowerCase().includes(normalizedQuery));
+        });
+    }, [products, query]);
+
+    const totalProducts = products.length;
+    const availableProducts = products.filter((product) => product.available).length;
+    const inventoryValue = products.reduce((total, product) => total + product.price, 0);
 
 
     return (
@@ -51,6 +84,8 @@ export default function ProductsPage() {
                             className="bg-surface-container-low border border-outline-variant/20 rounded-xl pl-12 pr-4 py-3 w-full sm:w-80 focus:ring-2 focus:ring-primary-fixed focus:border-transparent outline-none transition-all text-on-surface"
                             placeholder="Buscar productos..."
                             type="text"
+                            value={query}
+                            onChange={(event) => setQuery(event.target.value)}
                         />
                     </div>
                     <div className="flex items-center gap-3 bg-surface-container-high p-2 rounded-full border border-outline-variant/10">
@@ -70,19 +105,19 @@ export default function ProductsPage() {
             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-10">
                 <div className="glass-card p-6 rounded-xl">
                     <p className="text-label-sm text-on-surface-variant mb-2 uppercase tracking-wider">Total Productos</p>
-                    <h3 className="text-display-sm font-bold text-primary-container">124</h3>
+                    <h3 className="text-display-sm font-bold text-primary-container">{totalProducts}</h3>
                 </div>
                 <div className="glass-card p-6 rounded-xl">
-                    <p className="text-label-sm text-on-surface-variant mb-2 uppercase tracking-wider">Agotados</p>
-                    <h3 className="text-display-sm font-bold text-error">12</h3>
+                    <p className="text-label-sm text-on-surface-variant mb-2 uppercase tracking-wider">Disponibles</p>
+                    <h3 className="text-display-sm font-bold text-error">{availableProducts}</h3>
                 </div>
                 <div className="glass-card p-6 rounded-xl">
-                    <p className="text-label-sm text-on-surface-variant mb-2 uppercase tracking-wider">Más Vendido</p>
-                    <h3 className="text-headline-lg font-bold text-on-surface">Arroz Diana 1kg</h3>
+                    <p className="text-label-sm text-on-surface-variant mb-2 uppercase tracking-wider">Filtrados</p>
+                    <h3 className="text-headline-lg font-bold text-on-surface">{filteredProducts.length}</h3>
                 </div>
                 <div className="glass-card p-6 rounded-xl border-l-4 border-l-primary-container">
                     <p className="text-label-sm text-on-surface-variant mb-2 uppercase tracking-wider">Valor Inventario</p>
-                    <h3 className="text-headline-lg font-bold text-on-surface">$4.520.000</h3>
+                    <h3 className="text-headline-lg font-bold text-on-surface">{moneyFormatter.format(inventoryValue)}</h3>
                 </div>
             </section>
 
@@ -99,6 +134,14 @@ export default function ProductsPage() {
                     </div>
                 </div>
                 <div className="overflow-x-auto">
+                    {loading && (
+                        <div className="p-6 text-on-surface-variant">Cargando productos...</div>
+                    )}
+
+                    {error && (
+                        <div className="p-6 text-error">{error}</div>
+                    )}
+
                     <table className="w-full text-left border-collapse">
                         <thead className="bg-surface-container-high/50 text-label-sm text-on-surface-variant uppercase tracking-wider">
                             <tr>
@@ -110,12 +153,12 @@ export default function ProductsPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-outline-variant/10">
-                            {products.map((product) => (
+                            {filteredProducts.map((product) => (
                                 <tr key={product.id} className="hover:bg-surface-variant/10 transition-colors">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 rounded-lg bg-surface-container overflow-hidden border border-outline-variant/20">
-                                                <img className="w-full h-full object-cover" src={product.img} alt={product.name} />
+                                                <img className="w-full h-full object-cover" src={product.imageUrl} alt={product.name} />
                                             </div>
                                             <div>
                                                 <p className="font-bold text-on-surface">{product.name}</p>
@@ -128,11 +171,11 @@ export default function ProductsPage() {
                                             {product.category}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 font-medium text-on-surface">{product.price}</td>
+                                    <td className="px-6 py-4 font-medium text-on-surface">{moneyFormatter.format(product.price)}</td>
                                     <td className="px-6 py-4">
                                         <Toggle
-                                            defaultChecked={product.status}
-                                            label={product.status ? 'Disponible' : 'No Disp.'}
+                                            defaultChecked={product.available}
+                                            label={product.available ? 'Disponible' : 'No Disp.'}
                                         />
                                     </td>
                                     <td className="px-6 py-4 text-right">
