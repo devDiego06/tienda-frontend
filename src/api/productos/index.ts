@@ -1,0 +1,1 @@
+export type { CreateProductRequest, UpdateProductRequest,  } from './products.api'

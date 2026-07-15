@@ -42,7 +42,7 @@ export const useAuthStore = create<AuthState>()(
             isCustomer: () => get().user?.role === "CUSTOMER",
         }),
         {
-            name: 'token', //clave en localStorage
+            name: 'userInfo', //clave en localStorage
         }
     )
 )

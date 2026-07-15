@@ -30,7 +30,6 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const navigate = useNavigate()
   const setAuth = useAuthStore(state => state.setAuth)
 
   const passwordRef = useRef<HTMLInputElement>(null)

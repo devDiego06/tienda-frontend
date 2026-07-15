@@ -81,13 +81,6 @@ export default function Sidebar({ onNewProduct }: SidebarProps) {
 
             <div className="mt-auto border-t border-outline-variant/10 pt-4 flex flex-col gap-2">
                 <a
-                    className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary-container transition-colors rounded-lg"
-                    href="#"
-                >
-                    <span className="material-symbols-outlined">settings</span>
-                    <span className="text-label-md">Configuración</span>
-                </a>
-                <a
                     className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-error transition-colors rounded-lg"
                     onClick={handleLogout}
                 >

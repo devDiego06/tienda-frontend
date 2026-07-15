@@ -2,11 +2,40 @@ export interface Product {
   id: string;
   name: string;
   category: string;
-  price: string;
-  status: boolean;
-  img: string;
-  description?: string;
+  price: number;
+  available: boolean;
+  imageUrl: string;
+  description: string;
+  banner?: string;
 }
+
+
+export type BannerType = 'popular' | 'new' | 'sale';
+
+export interface BannerConfig {
+  label: string;
+  className: string;
+  position: 'left' | 'right';
+}
+
+export const BANNER_CONFIG: Record<BannerType, BannerConfig> = {
+  popular: {
+    label: 'Popular',
+    className: 'bg-primary-container text-on-primary-fixed neon-glow',
+    position: 'left',
+  },
+  new: {
+    label: 'Nuevo',
+    className: 'bg-tertiary-fixed text-on-tertiary-fixed',
+    position: 'left',
+  },
+  sale: {
+    label: '¡Oferta!',
+    className: 'bg-error text-on-error',
+    position: 'right',
+  },
+};
+
 
 export interface Order {
   id: string;

@@ -1,6 +1,19 @@
+import type { SetStateAction } from "react"
+
+interface PropsSidenav {
+    selectedCategory: string
+    onSelectedCategory: React.Dispatch<SetStateAction<string>>
+}
+
+const isSelectedCategory = (category: string, selectedCategory: string) => {
+    if(category === selectedCategory) {
+        return 'active-nav-bg text-primary-container font-bold border-l-2 border-primary-container'
+    }
+}
 
 
-export default function SideNav() {
+
+export default function SideNav({ selectedCategory, onSelectedCategory }: PropsSidenav) {
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest border-r border-outline-variant/10 z-50 flex flex-col p-6">
                 <div className="mb-10">
@@ -11,34 +24,34 @@ export default function SideNav() {
                     <div className="mb-4">
                         <span className="text-label-sm font-bold text-on-surface-variant uppercase tracking-wider pl-4">Categorías</span>
                     </div>
-                    <a className="flex items-center gap-3 px-4 py-3 rounded-xl active-nav-bg text-primary-container font-bold border-l-2 border-primary-container" href="#">
+                    <button value="all" onClick={() => onSelectedCategory('all')}  className={`flex items-center gap-3 px-4 py-3 rounded-xl ${isSelectedCategory('all', selectedCategory) ? 'active-nav-bg text-primary-container font-bold border-l-2 border-primary-container' : 'text-on-surface-variant hover:bg-surface-container-high/50'} transition-all`}>
                         <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>grid_view</span>
                         <span className="text-label-md">Todos</span>
-                    </a>
-                    <a className="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high/50 transition-all" href="#">
+                    </button>
+                    <button value="Frutas y Verduras" onClick={() => onSelectedCategory('Frutas y Verduras')}  className={`flex items-center gap-3 px-4 py-3 rounded-xl ${isSelectedCategory('Frutas y Verduras', selectedCategory) ? 'active-nav-bg text-primary-container font-bold border-l-2 border-primary-container' : 'text-on-surface-variant hover:bg-surface-container-high/50'} transition-all`}>
                         <span className="material-symbols-outlined">nutrition</span>
-                        <span className="text-label-md">Frutas</span>
-                    </a>
-                    <a className="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high/50 transition-all" href="#">
-                        <span className="material-symbols-outlined">eco</span>
-                        <span className="text-label-md">Verduras</span>
-                    </a>
-                    <a className="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high/50 transition-all" href="#">
+                        <span className="text-label-md">Frutas y Verduras</span>
+                    </button>
+                      <button value="Granos" onClick={() => onSelectedCategory('Granos')}  className={`flex items-center gap-3 px-4 py-3 rounded-xl ${isSelectedCategory('Granos', selectedCategory) ? 'active-nav-bg text-primary-container font-bold border-l-2 border-primary-container' : 'text-on-surface-variant hover:bg-surface-container-high/50'} transition-all`}>
+                        <span className="material-symbols-outlined">grain</span>
+                        <span className="text-label-md">Granos</span>
+                    </button>
+                    <button value="Lácteos" onClick={() => onSelectedCategory('Lácteos')} className={`flex items-center gap-3 px-4 py-3 rounded-xl ${isSelectedCategory('Lácteos', selectedCategory) ? 'active-nav-bg text-primary-container font-bold border-l-2 border-primary-container' : 'text-on-surface-variant hover:bg-surface-container-high/50'} transition-all`}>
                         <span className="material-symbols-outlined">egg</span>
                         <span className="text-label-md">Lácteos</span>
-                    </a>
-                    <a className="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high/50 transition-all" href="#">
+                    </button>
+                    <button value="Panadería" onClick={() => onSelectedCategory('Panadería')} className={`flex items-center gap-3 px-4 py-3 rounded-xl ${isSelectedCategory('Panadería', selectedCategory) ? 'active-nav-bg text-primary-container font-bold border-l-2 border-primary-container' : 'text-on-surface-variant hover:bg-surface-container-high/50'} transition-all`}>
                         <span className="material-symbols-outlined">bakery_dining</span>
                         <span className="text-label-md">Panadería</span>
-                    </a>
-                    <a className="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high/50 transition-all" href="#">
+                    </button>
+                    <button value="Carnes" onClick={() => onSelectedCategory('Carnes')} className={`flex items-center gap-3 px-4 py-3 rounded-xl ${isSelectedCategory('Carnes', selectedCategory) ? 'active-nav-bg text-primary-container font-bold border-l-2 border-primary-container' : 'text-on-surface-variant hover:bg-surface-container-high/50'} transition-all`}>
                         <span className="material-symbols-outlined">restaurant</span>
                         <span className="text-label-md">Carnes</span>
-                    </a>
-                    <a className="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high/50 transition-all" href="#">
+                    </button>
+                    <button value="Bebidas" onClick={() => onSelectedCategory('Bebidas')} className={`flex items-center gap-3 px-4 py-3 rounded-xl ${isSelectedCategory('Bebidas', selectedCategory) ? 'active-nav-bg text-primary-container font-bold border-l-2 border-primary-container' : 'text-on-surface-variant hover:bg-surface-container-high/50'} transition-all`}>
                         <span className="material-symbols-outlined">local_bar</span>
                         <span className="text-label-md">Bebidas</span>
-                    </a>
+                    </button>
                 </nav>
                 <div className="mt-auto pt-6 border-t border-outline-variant/10">
                     <div className="flex items-center gap-3 p-2 hover:bg-surface-container-high/50 rounded-xl cursor-pointer transition-all">
@@ -51,6 +64,13 @@ export default function SideNav() {
                         </div>
                         <span className="material-symbols-outlined text-on-surface-variant">settings</span>
                     </div>
+                    <a
+                    className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-error transition-colors rounded-lg"
+                    onClick={null}
+                >
+                    <span className="material-symbols-outlined">logout</span>
+                    <span onClick={null} className="text-label-md">Salir</span>
+                </a>
                 </div>
             </aside>
   )
