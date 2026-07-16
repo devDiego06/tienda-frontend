@@ -1,4 +1,6 @@
 import type { SetStateAction } from "react"
+import { useAuthStore } from "../../store/Auth.store"
+import { useNavigate } from "react-router-dom"
 
 interface PropsSidenav {
     selectedCategory: string
@@ -14,6 +16,18 @@ const isSelectedCategory = (category: string, selectedCategory: string) => {
 
 
 export default function SideNav({ selectedCategory, onSelectedCategory }: PropsSidenav) {
+
+
+
+     const { clearAuth } = useAuthStore()
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        clearAuth();
+        navigate('/login', { replace: true });
+    }
+
+
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest border-r border-outline-variant/10 z-50 flex flex-col p-6">
                 <div className="mb-10">
@@ -52,6 +66,10 @@ export default function SideNav({ selectedCategory, onSelectedCategory }: PropsS
                         <span className="material-symbols-outlined">local_bar</span>
                         <span className="text-label-md">Bebidas</span>
                     </button>
+                    <button value="Aseo" onClick={() => onSelectedCategory('Aseo')} className={`flex items-center gap-3 px-4 py-3 rounded-xl ${isSelectedCategory('Aseo', selectedCategory) ? 'active-nav-bg text-primary-container font-bold border-l-2 border-primary-container' : 'text-on-surface-variant hover:bg-surface-container-high/50'} transition-all`}>
+                        <span className="material-symbols-outlined">cleaning_services</span>
+                        <span className="text-label-md">Aseo</span>
+                    </button>
                 </nav>
                 <div className="mt-auto pt-6 border-t border-outline-variant/10">
                     <div className="flex items-center gap-3 p-2 hover:bg-surface-container-high/50 rounded-xl cursor-pointer transition-all">
@@ -66,10 +84,10 @@ export default function SideNav({ selectedCategory, onSelectedCategory }: PropsS
                     </div>
                     <a
                     className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-error transition-colors rounded-lg"
-                    onClick={null}
+                    onClick={handleLogout}
                 >
                     <span className="material-symbols-outlined">logout</span>
-                    <span onClick={null} className="text-label-md">Salir</span>
+                    <span onClick={handleLogout} className="text-label-md">Salir</span>
                 </a>
                 </div>
             </aside>

@@ -8,6 +8,8 @@ interface ProductModalProps {
 export function ProductModal({ isOpen, onClose }: ProductModalProps) {
     if (!isOpen) return null;
 
+      const categorias = products.map(product => product.category).filter((value, index, self) => self.indexOf(value) === index)
+
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div className="modal-overlay absolute inset-0" onClick={onClose} />
@@ -53,6 +55,7 @@ export function ProductModal({ isOpen, onClose }: ProductModalProps) {
                                 <option>Lácteos</option>
                                 <option>Aseo</option>
                                 <option>Bebidas</option>
+                                <option>Panadería</option>
                             </select>
                         </div>
                     </div>
