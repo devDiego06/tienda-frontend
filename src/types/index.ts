@@ -1,13 +1,3 @@
-export interface Product {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  available: boolean;
-  imageUrl: string;
-  description: string;
-  banner?: string;
-}
 
 
 export type BannerType = 'popular' | 'new' | 'sale';
@@ -35,6 +25,22 @@ export const BANNER_CONFIG: Record<BannerType, BannerConfig> = {
     position: 'right',
   },
 };
+
+export interface Product {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  available: boolean;
+  imageUrl: string;
+  description: string;
+  banner?: string;
+}
+
+export interface CartItem {
+  product: Product;
+  quantity: number;
+}
 
 
 export interface Order {

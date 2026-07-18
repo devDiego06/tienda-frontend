@@ -19,8 +19,12 @@ export default function SideNav({ selectedCategory, onSelectedCategory }: PropsS
 
 
 
-     const { clearAuth } = useAuthStore()
+    const { clearAuth } = useAuthStore()
     const navigate = useNavigate();
+
+    const user  = useAuthStore(state => state.user);
+
+
 
     const handleLogout = () => {
         clearAuth();
@@ -74,13 +78,12 @@ export default function SideNav({ selectedCategory, onSelectedCategory }: PropsS
                 <div className="mt-auto pt-6 border-t border-outline-variant/10">
                     <div className="flex items-center gap-3 p-2 hover:bg-surface-container-high/50 rounded-xl cursor-pointer transition-all">
                         <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden">
-                            <img alt="User" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQpqn54c7XXrc0SL4iq5ooJqZfVmUOynSSmjreuBwHIIEpGjMMNGU5bTZiAyFyq6otQ5Qi1xERbQskiqIR5KtYUIp8zguOtztpgy1YKn6UdX5wj0mQKMxdTZHTxNOJg1cj8WAzxBbg-6ZFGCAMk0mSSSqKDmwbodNbuaG_QIVAomhzE5z_rykLUV6bl4Ky-iIKF_owLQq30f8lgNY89Ni3ccjqGT_mcdM4yB9ru-sxkYX0assCcd6bneNELbRZP6FikDzNC7F0Gf8" />
+                            <img alt="User" className="w-full h-full object-cover" src="https://images.unsplash.com/photo-1740252117012-bb53ad05e370?q=80&w=1180&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
                         </div>
-                        <div className="flex-1 overflow-hidden">
-                            <p className="text-on-surface font-bold truncate">Carlos G.</p>
-                            <p className="text-label-sm text-on-surface-variant truncate">Premium User</p>
-                        </div>
-                        <span className="material-symbols-outlined text-on-surface-variant">settings</span>
+                        <button className="flex-2 overflow-hidden">
+                            <span className="text-on-surface font-bold truncate">{user?.name}</span>
+                            <p className="text-label-sm text-on-surface-variant truncate">{user?.role}</p>
+                        </button>
                     </div>
                     <a
                     className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-error transition-colors rounded-lg"

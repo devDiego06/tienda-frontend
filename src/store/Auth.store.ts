@@ -48,4 +48,5 @@ export const useAuthStore = create<AuthState>()(
 )
 
 export const getAuthToken = () => useAuthStore.getState().token
+export const getAuthUser = () => useAuthStore.getState().user
 export const clearAuthState = () => useAuthStore.getState().clearAuth()

@@ -1,5 +1,6 @@
 
 import { formatCurrency } from '../../helpers'
+import { useCart } from '../../hooks/useCart'
 import type { Product } from '../../types'
 
 
@@ -11,7 +12,7 @@ interface PropsProductsCard{
 
 export default function ProductCard({ products }: PropsProductsCard) {
 
-    
+    const { addToCart, totalItems} = useCart();
 
   return (
     (
@@ -28,10 +29,10 @@ export default function ProductCard({ products }: PropsProductsCard) {
                                 <div className="flex items-center justify-between mt-auto">
                                     <span className="text-2xl font-bold text-primary-container">{formatCurrency(product.price)}</span>
                                     <div className="flex items-center gap-1">
-                                        <button className="bg-primary-container text-on-primary-fixed w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xl hover:scale-105 active:scale-95 transition-all" >
+                                        <button onClick={() => addToCart(product)} className="bg-primary-container text-on-primary-fixed w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xl hover:scale-105 active:scale-95 transition-all" >
                                             <span className="material-symbols-outlined">add</span>
                                         </button>
-                                        <div className="hidden stepper-controls flex items-center bg-surface-container-highest rounded-xl p-1">
+                                        <div className={`${totalItems > 0 ? ' stepper-controls flex items-center bg-surface-container-highest rounded-xl p-1' : 'hidden'}`}>
                                             <button className="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary-container"><span className="material-symbols-outlined text-sm">remove</span></button>
                                             <span className="px-3 text-primary-container">1</span>
                                             <button className="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary-container"><span className="material-symbols-outlined text-sm">add</span></button>

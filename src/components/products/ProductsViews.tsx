@@ -41,10 +41,7 @@ export default function ProductsViews({ products, category, ordenarProductos }: 
         const filteredProducts = useMemo(() => {
             const normalizedQuery = query.trim().toLowerCase();
     
-            if (!normalizedQuery) {
-                return products;
-            }
-    
+            if (!normalizedQuery) return products;
             return products.filter((product) => {
                 return [product.name, product.description]
                     .filter(Boolean)
@@ -69,21 +66,17 @@ export default function ProductsViews({ products, category, ordenarProductos }: 
                         onChange={(e) => setQuery(e.target.value)}
                         type="text" />
                     </div>
-                    <div className="flex items-center gap-3 bg-surface-container-low p-1.5 rounded-2xl border border-outline-variant/10">
-                        <span className="text-label-md font-bold text-on-surface-variant px-3 uppercase tracking-tighter">Ordenar:</span>
-                        <button className="bg-surface-container-high text-primary-container px-4 py-2 rounded-xl text-label-md font-bold transition-all shadow-lg">Popular</button>
-                        <button className="text-on-surface-variant px-4 py-2 rounded-xl text-label-md font-bold hover:bg-surface-container-high transition-all">Precio</button>
-                        <button className="text-on-surface-variant px-4 py-2 rounded-xl text-label-md font-bold hover:bg-surface-container-high transition-all">Nuevos</button>
-                    </div>
+                  
                 </header>
                 {/* <!-- Product Section --> */}
                 <section className="mb-12">
                     <div className="flex items-end justify-between mb-8">
                         <div>
                             <h2 className="text-display-md text-primary tracking-tighter">{filterCategoryName}</h2>
-                            <p className="text-on-surface-variant mt-2 text-body-md max-w-md">Productos frescos seleccionados diariamente de granjas locales.</p>
+                            <p className="text-on-surface-variant mt-2 text-body-md max-w-md">Productos frescos seleccionados diariamente de tiendas locales.</p>
                         </div>
-                        <div className="flex gap-1">
+                        <div className="flex gap-2 items-center">
+                            <span className="text-on-surface-variant mt-2 text-body-md max-w-md">Ordenar por: </span>
                              <select onChange={(e) => ordenarProductos(e.target.value)} className="bg-surface-container-low border-outline-variant/10 rounded-2xl py-4 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary-container outline-none focus:border-transparent transition-all placeholder:text-on-surface-variant/50">
                         <option value="defecto">Defecto</option>
                         <option value="precio-asc">Precio: Menor a Mayor</option>
