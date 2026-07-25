@@ -50,9 +50,6 @@ export default function ProductsViews({ products, category, ordenarProductos }: 
         }, [products, query]);
 
 
-
-
-    console.log(filteredProducts);
     
   return (
     <main className="ml-64 mr-80 min-h-screen flex flex-col flex-1 p-margin">

@@ -1,75 +1,63 @@
-# React + TypeScript + Vite
+# Tienda Barrio Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<p align="center">
+  <img src="public/logo.svg" alt="Logo de Tienda Barrio" width="420" />
+</p>
 
-Currently, two official plugins are available:
+Frontend de una tienda de barrio construido con React, TypeScript y Vite. La app permite a los clientes navegar el catálogo, agregar productos al carrito y completar el checkout, mientras que el panel administrativo permite gestionar productos, pedidos y el dashboard.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Funcionalidades
 
-## React Compiler
+- Autenticación de usuarios con vistas de login y registro.
+- Catálogo de productos para clientes.
+- Carrito de compras con cálculo de subtotal y costo de envío.
+- Flujo de checkout para finalizar pedidos.
+- Panel administrativo con dashboard, gestión de productos y pedidos.
+- Interfaz oscura con acentos verde lima y estilo moderno.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## Tecnologías
 
-Note: This will impact Vite dev & build performances.
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS
+- Zustand
+- React Router DOM
+- Axios
 
-## Expanding the ESLint configuration
+## Rutas principales
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- `/login` y `/register` para acceso de usuarios.
+- `/catalogo` para clientes.
+- `/checkout` para finalizar la compra.
+- `/admin/dashboard`, `/admin/products` y `/admin/pedidos` para administración.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Instalación
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. Clona el repositorio.
+2. Instala dependencias con `npm install`.
+3. Ejecuta el entorno local con `npm run dev`.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Scripts disponibles
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- `npm run dev`: inicia el servidor de desarrollo.
+- `npm run build`: compila la aplicación para producción.
+- `npm run lint`: valida el código con ESLint.
+- `npm run preview`: previsualiza la versión compilada.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Estructura general
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- `src/page/public`: catálogo y checkout.
+- `src/page/auth`: login y registro.
+- `src/page/admin`: dashboard y administración.
+- `src/components`: componentes reutilizables.
+- `src/store`: estado global con Zustand.
+- `src/api`: consumo de servicios.
+
+## Logo
+
+El logo del proyecto está en `public/logo.svg`. Puedes reutilizarlo en el README, en el favicon o en cualquier material de presentación del proyecto.
+
+## Nota
+
+Este README está pensado para GitHub y para personas que quieran entender rápidamente qué hace la aplicación, cómo correrla y dónde encontrar sus piezas principales.

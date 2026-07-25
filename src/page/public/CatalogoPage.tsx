@@ -51,12 +51,7 @@ export default function CatalogoPage() {
 
     const ordenarProductos = (criterio: string) => {
         setOrden(criterio);
-
     }
-   
-    
-    
-    
 
 
     return (

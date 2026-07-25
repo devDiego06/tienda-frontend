@@ -33,7 +33,7 @@
     --color-tertiary-fixed: #7df4ff;
     --color-on-tertiary-fixed: #002022;
     --color-on-tertiary: #00363a;
-
+    --color-on-primary: #283500;
     /* Bordes */
     --radius: 0.25rem;
     --radius-lg: 16px;

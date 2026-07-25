@@ -3,9 +3,10 @@ import { Toggle } from '../ui/Toggle';
 interface EditProductModalProps {
     isOpen: boolean;
     onClose: () => void;
+    categorys: string[];
 }
 
-export default function EditProductModal({ isOpen, onClose }: EditProductModalProps) {
+export default function EditProductModal({ isOpen, onClose, categorys }: EditProductModalProps) {
     if (!isOpen) return null;
 
     return (
@@ -40,12 +41,14 @@ export default function EditProductModal({ isOpen, onClose }: EditProductModalPr
                         </div>
                         <div className="space-y-2">
                             <label className="text-label-md font-bold text-on-surface">Categoría</label>
-                            <select className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-fixed outline-none transition-all appearance-none text-on-surface">
-                                <option>Granos</option>
-                                <option>Lácteos</option>
-                                <option>Aseo</option>
-                                <option>Bebidas</option>
-                            </select>
+                             <select className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-fixed outline-none transition-all appearance-none text-on-surface">
+                            {
+                                categorys.map((cat, index) => (
+                                 <option key={index}>{cat}</option>     
+                                ))
+                                
+                            }
+                             </select>
                         </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">

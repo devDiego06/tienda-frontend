@@ -25,7 +25,13 @@ export const productsApi = {
     getByStore: async (storeId: string) => {
         const res = await client.get<Product[]>(`/products?storeId=${storeId}`)
         return res.data;
+    },
+
+    create: async (storeId: string, productData: CreateProductRequest) => {
+        const res = await client.post<Product>(`/products?storeId=${storeId}`, productData);
+        return res.data;
     }
+
 
     
 

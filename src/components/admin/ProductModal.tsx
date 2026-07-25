@@ -8,7 +8,7 @@ interface ProductModalProps {
 export function ProductModal({ isOpen, onClose }: ProductModalProps) {
     if (!isOpen) return null;
 
-      const categorias = products.map(product => product.category).filter((value, index, self) => self.indexOf(value) === index)
+    //   const categorias = products.map(product => product.category).filter((value, index, self) => self.indexOf(value) === index)
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">

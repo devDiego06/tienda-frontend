@@ -8,6 +8,7 @@ import PedidosPage from '../page/admin/PedidosPage'
 import PublicRoute from './PublicRoute'
 import ProtectedRoute from './ProtectedRoutes'
 import CatalogoPage from '../page/public/CatalogoPage'
+import ChechkoutPage from '../page/public/ChechkoutPage'
 
 
 export const routes = createBrowserRouter([
@@ -35,6 +36,14 @@ export const routes = createBrowserRouter([
         element: (
             <ProtectedRoute requiredRole="CUSTOMER">
                 <CatalogoPage />
+            </ProtectedRoute>
+        )
+    },
+     {
+        path: '/checkout',
+        element: (
+            <ProtectedRoute requiredRole="CUSTOMER">
+                <ChechkoutPage />
             </ProtectedRoute>
         )
     },

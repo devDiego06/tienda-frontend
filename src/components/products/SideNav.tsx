@@ -1,6 +1,7 @@
 import type { SetStateAction } from "react"
 import { useAuthStore } from "../../store/Auth.store"
 import { useNavigate } from "react-router-dom"
+import { useCartStore } from "../../store/Cart.store"
 
 interface PropsSidenav {
     selectedCategory: string
@@ -23,20 +24,21 @@ export default function SideNav({ selectedCategory, onSelectedCategory }: PropsS
     const navigate = useNavigate();
 
     const user  = useAuthStore(state => state.user);
+    const { clearCart } = useCartStore();
 
 
 
     const handleLogout = () => {
         clearAuth();
+        clearCart();
         navigate('/login', { replace: true });
     }
 
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest border-r border-outline-variant/10 z-50 flex flex-col p-6">
-                <div className="mb-10">
-                    <h1 className="text-headline-lg font-black text-primary-container tracking-tight">Tienda Barrio</h1>
-                    <p className="text-caption uppercase tracking-widest text-on-surface-variant mt-1 font-bold">Catálogo Premium</p>
+                <div className="mb-10 flex items-center justify-center gap-3">
+                    <img alt="Logo" className="w-auto h-auto" src="/logo.svg" />
                 </div>
                 <nav className="flex-1 space-y-2 custom-scrollbar overflow-y-auto pr-2">
                     <div className="mb-4">

@@ -33,9 +33,13 @@ export const useAuthStore = create<AuthState>()(
             //enviar el usuario y el token
             setAuth: (token, user) => set({token, user}),
 
+            //eliminar usuario y token de localstorage y del estado
+            
             //limpiar la autenticacion
-            clearAuth: () => set({token: null, user: null}),
-
+            clearAuth: () => {
+                set({token: null, user: null});
+                localStorage.removeItem('userInfo');
+            },
             //verificar si esta autenticado
             isAuthenticated: () => !!get().token,
             isAdmin: () => get().user?.role === "ADMIN",

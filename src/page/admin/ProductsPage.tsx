@@ -63,6 +63,14 @@ export default function ProductsPage() {
         });
     }, [products, query]);
 
+    const categorys = useMemo(() => {
+        //obtener categorias unicas de los productos
+        const uniqueCategorys = new Set(products.map(product => product.category));
+        return Array.from(uniqueCategorys);
+    }, [products]);
+
+    
+
     const totalProducts = products.length;
     const availableProducts = products.filter((product) => product.available).length;
     const inventoryValue = products.reduce((total, product) => total + product.price, 0);
@@ -218,7 +226,7 @@ export default function ProductsPage() {
                     </div>
                 </div>
             </section>
-            <EditProductModal isOpen={isOpen} onClose={() => setIsOpen(false)}  />
+            <EditProductModal categorys={categorys} isOpen={isOpen} onClose={() => setIsOpen(false)}  />
         </div>
     );
 }

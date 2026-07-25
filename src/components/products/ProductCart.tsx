@@ -1,12 +1,21 @@
+import { Navigate, useNavigate } from "react-router-dom";
 import { formatCurrency } from "../../helpers";
 import { useCart } from "../../hooks/useCart"
-import { useCartStore } from "../../store/Cart.store"
+
+
 
 
 export default function ProductCart() {
 
-    const { items, deliveryType, customerNote, addToCart, removeFromCart, updateQuantity, totalItems, totalPrice } = useCart();
+    const { items, addToCart, removeFromCart, updateQuantity, totalPrice, subtotal } = useCart();
 
+    const navigate = useNavigate();
+
+
+    const checkOutButton = () => {
+        if(items.length === 0) return;
+        navigate('/checkout');
+    }
 
 
     return (
@@ -32,9 +41,9 @@ export default function ProductCart() {
                                     <p className="text-on-surface font-bold truncate leading-tight">{item.product.name}</p>
                                     <p className="text-xs text-on-surface-variant mt-1">{item.quantity} x {formatCurrency(item.product.price)}</p>
                                     <div className="flex items-center gap-3 mt-2">
-                                        <button className="w-6 h-6 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-primary-container transition-colors flex items-center justify-center"><span className="material-symbols-outlined text-xs">remove</span></button>
-                                        <span className="text-label-sm text-on-surface">1</span>
-                                        <button className="w-6 h-6 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-primary-container transition-colors flex items-center justify-center"><span className="material-symbols-outlined text-xs">add</span></button>
+                                        <button onClick={() => updateQuantity(item.product.id, -1)} className="w-6 h-6 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-primary-container transition-colors flex items-center justify-center"><span className="material-symbols-outlined text-xs">remove</span></button>
+                                        <span className="text-label-sm text-on-surface">{item.quantity}</span>
+                                        <button onClick={() => addToCart(item.product)} className="w-6 h-6 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-primary-container transition-colors flex items-center justify-center"><span className="material-symbols-outlined text-xs">add</span></button>
                                     </div>
                                 </div>
                                 <button onClick={() => removeFromCart(item.product.id)}  className="text-on-surface-variant opacity-0 group-hover:opacity-100 hover:text-error transition-all self-start">
@@ -49,17 +58,17 @@ export default function ProductCart() {
             <div className="mt-auto pt-6 border-t border-outline-variant/10 space-y-4">
                 <div className="flex justify-between items-center text-on-surface-variant">
                     <span className="text-label-md">Subtotal</span>
-                    <span className="font-medium">$11.00</span>
+                    <span className="font-medium">{formatCurrency(totalPrice)}</span>
                 </div>
                 <div className="flex justify-between items-center text-on-surface-variant">
                     <span className="text-label-md">Envío</span>
-                    <span className="font-medium text-primary-container">GRATIS</span>
+                    <span className="font-medium text-primary-container">{formatCurrency(2000)}</span>
                 </div>
                 <div className="flex justify-between items-center text-on-surface pt-2">
                     <span className="text-label-md font-bold">Total</span>
-                    <span className="text-2xl font-bold text-primary-container">$11.00</span>
+                    <span className="text-2xl font-bold text-primary-container">{ formatCurrency(subtotal + 2000)}</span>
                 </div>
-                <button className="w-full bg-primary-container text-on-primary-fixed py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:scale-[1.02] active:scale-95 transition-all neon-glow flex items-center justify-center gap-2">
+                <button onClick={() => checkOutButton()} className={`w-full ${items.length === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-100'} bg-primary-container text-on-primary-fixed py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:scale-[1.02] active:scale-95 transition-all neon-glow flex items-center justify-center gap-2`}>
                     Proceder al Pago
                     <span className="material-symbols-outlined">arrow_forward</span>
                 </button>

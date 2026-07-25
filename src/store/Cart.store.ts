@@ -1,38 +1,30 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import type { CartItem } from "../types";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import type { CartItem } from '../types';
 
 export const DeliveryType = {
   HOME_DELIVERY: 'home_delivery',
-  STORE_PICKUP:'store_pickup'
+  STORE_PICKUP: 'store_pickup',
 } as const;
 
+export type DeliveryTypeValue = typeof DeliveryType[keyof typeof DeliveryType];
+
 interface CartState {
-    items: CartItem[];
-    deliveryType: string;
-    customerNote: string;
-
-
-    //acciones
-    setItems: (items: CartItem[]) => void;
-    setDeliveryType: (type: string) => void;
-    setCustomerNote: (note: string) => void;
-    clearCart: () => void;
-
+  items: CartItem[];
+  setItems: (items: CartItem[]) => void;
+  clearCart: () => void;
 }
 
 export const useCartStore = create<CartState>()(
-        persist(
-            (set) => ({
-                items: [],
-                deliveryType: DeliveryType.HOME_DELIVERY || DeliveryType.STORE_PICKUP,
-                customerNote: '',
-
-                setItems: (items) => set({ items}),
-                setDeliveryType: (type) => set({ deliveryType: type}),
-                setCustomerNote: (note) => set({ customerNote: note}),
-                clearCart: () => set({items: [], customerNote: ''}),  
-            }),
-            { name: 'cart-storage' }
-        )
-    )
+  persist(
+    (set) => ({
+      items: [],
+      setItems: (items) => set({ items }),
+      clearCart: () => {
+        set({ items: [] });
+        localStorage.removeItem('cart-storage');
+      },
+    }),
+    { name: 'cart-storage' }
+  )
+);

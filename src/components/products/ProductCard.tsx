@@ -12,7 +12,15 @@ interface PropsProductsCard{
 
 export default function ProductCard({ products }: PropsProductsCard) {
 
-    const { addToCart, totalItems} = useCart();
+    const {items, addToCart, totalItems, updateQuantity} = useCart();
+
+    //buscar si el producto ya esta en el carrito
+    const isInCart = (productId: string) => {
+        return items.some(item => item.product.id === productId);
+    }
+    
+
+    
 
   return (
     (
@@ -29,13 +37,13 @@ export default function ProductCard({ products }: PropsProductsCard) {
                                 <div className="flex items-center justify-between mt-auto">
                                     <span className="text-2xl font-bold text-primary-container">{formatCurrency(product.price)}</span>
                                     <div className="flex items-center gap-1">
-                                        <button onClick={() => addToCart(product)} className="bg-primary-container text-on-primary-fixed w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xl hover:scale-105 active:scale-95 transition-all" >
+                                        <button onClick={() => addToCart(product)} className={`${isInCart(product.id) ? 'hidden' : 'bg-primary-container text-on-primary-fixed w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xl hover:scale-105 active:scale-95 transition-all'}`}>
                                             <span className="material-symbols-outlined">add</span>
                                         </button>
-                                        <div className={`${totalItems > 0 ? ' stepper-controls flex items-center bg-surface-container-highest rounded-xl p-1' : 'hidden'}`}>
-                                            <button className="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary-container"><span className="material-symbols-outlined text-sm">remove</span></button>
-                                            <span className="px-3 text-primary-container">1</span>
-                                            <button className="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary-container"><span className="material-symbols-outlined text-sm">add</span></button>
+                                        <div className={`${isInCart(product.id) ? ' stepper-controls flex items-center bg-surface-container-highest rounded-xl p-1' : 'hidden'}`}>
+                                            <button onClick={() => updateQuantity(product.id, -1)} className="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary-container"><span className="material-symbols-outlined text-sm">remove</span></button>
+                                            <span className="px-3 text-primary-container">{items.find((i) => i.product.id === product.id)?.quantity || 1}</span>
+                                            <button onClick={() => addToCart(product)} className="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary-container"><span className="material-symbols-outlined text-sm">add</span></button>
                                         </div>
                                     </div>
                                 </div>
