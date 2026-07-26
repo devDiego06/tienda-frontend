@@ -2,14 +2,20 @@ import { formatCurrency } from "../helpers";
 import { useCartStore } from "../store/Cart.store";
 import type { Product } from "../types";
 
-export function useCart(){
+export function useCart() {
     const { items, setItems, clearCart } = useCartStore();
+    const deliveryType = useCartStore((state) => state.deliveryType);
+    const paymentMethod = useCartStore((state) => state.paymentMethod);
+    const updateDeliveryType = useCartStore((state) => state.setDeliveryType);
+    const updatePaymentMethod = useCartStore((state) => state.setPaymentMethod);
+    const customerNote = useCartStore((state) => state.customerNote);
+    const setCustomerNote = useCartStore((state) => state.setCustomerNote);
 
     const addToCart = (product: Product) => {
         const existingItem = items.find((i) => i.product.id === product.id);
-        if(existingItem){
-            if(existingItem.quantity >= 10) return;
-            setItems(items.map((i) => i.product.id === product.id ? {...i, quantity: i.quantity + 1} : i));
+        if (existingItem) {
+            if (existingItem.quantity >= 10) return;
+            setItems(items.map((i) => i.product.id === product.id ? { ...i, quantity: i.quantity + 1 } : i));
         } else {
             setItems([...items, { product, quantity: 1 }]);
         }
@@ -34,8 +40,8 @@ export function useCart(){
 
     // Observación individual por producto — se llena en la pantalla de checkout
     const updateNote = (productId: string, note: string) => {
-        setItems(items.map((i) => i.product.id === productId ? {...i, note} : i));
-    };
+        setItems(items.map((i) => i.product.id === productId ? { ...i, itemNote: note } : i));
+    };  
 
     const subtotal = items.reduce((subtotal, item) => subtotal + item.product.price * item.quantity, 0);
     const deliveryCost = formatCurrency(2000)
@@ -52,6 +58,12 @@ export function useCart(){
         removeFromCart,
         updateQuantity,
         updateNote,
+        updateDeliveryType,
+        updatePaymentMethod,
+        deliveryType,
+        paymentMethod,
         clearCart,
-    };
-}
+        customerNote,
+        setCustomerNote,
+    }
+};

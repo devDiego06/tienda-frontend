@@ -32,19 +32,7 @@ export default function Sidebar({ onNewProduct }: SidebarProps) {
         <aside className="bg-surface-container-lowest/80 backdrop-blur-xl w-64 fixed left-4 top-4 bottom-4 overflow-y-auto border border-outline-variant/20 flex flex-col gap-margin p-margin z-50 rounded-xl shadow-xl transition-all">
             <div className="mb-8">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center">
-                        <span
-                            className="material-symbols-outlined text-on-primary-fixed"
-                            style={{ fontVariationSettings: '"FILL" 1' }}
-                        >
-                            storefront
-                        </span>
-                    </div>
-                    <div>
-                        <h1 className="text-body-md font-bold text-primary-container tracking-tight">
-                            Tienda
-                        </h1>
-                    </div>
+                    <img alt="Logo" className="w-auto h-auto" src="/logo.svg" />
                 </div>
             </div>
 

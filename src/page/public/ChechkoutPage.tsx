@@ -1,17 +1,52 @@
 import { formatCurrency } from "../../helpers";
 import { useCart } from "../../hooks/useCart";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { DeliveryType, PaymentMethod } from "../../store/Cart.store";
 
 export default function ChechkoutPage() {
 
-    const { items, addToCart, removeFromCart, updateQuantity, totalPrice, subtotal, deliveryCost } = useCart();
+    const { items, totalPrice, subtotal, updateDeliveryType, updatePaymentMethod, updateNote, deliveryType, paymentMethod, customerNote, setCustomerNote } = useCart();
+    
+
+    //pasamos la informacion para enviar a la api, para crear el pedido
+    const orderData = {
+        storeId: '',
+        items: items.map((item) => ({
+            productId: item.product.id,
+            quantity: item.quantity,
+            ...(item.itemNote ? { itemNote: item.itemNote } : {}),
+        })),
+        deliveryType: deliveryType,
+        paymentMethod: paymentMethod,
+        customerNote: customerNote,
+        totalPrice: totalPrice + 2000, // Adding delivery cost
+    }
+
+    const navigate = useNavigate();
+
+    const handleItemNoteChange = (productId: string, itemNote: string) => {
+        updateNote(productId, itemNote);
+    }
+
+    const handleCustomerNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setCustomerNote(e.target.value);
+    };
 
 
+//redireccionar el carrito si no hay productos, para que no se pueda acceder a la pagina de checkout sin productos
+    useEffect(() => {
+        if (items.length === 0) {
+            navigate('/catalogo', { replace: true });
+        }
+    }, [items.length, navigate]);
 
-console.log(items);
+    console.log(orderData);
+    
 
 
     return (
-        <main className="pt-24 pb-32 px-4 md:px-margin max-w-[1500px] mx-auto min-h-screen">
+        <main className="pt-24 pb-32 px-4 md:px-margin max-w-375 mx-auto min-h-screen">
             <header className="mb-10">
                 <h1 className="font-display-md text-display-md text-primary-fixed mb-2">Finalizar Pedido</h1>
                 <p className="font-body-md text-on-surface-variant">Revisa tus productos y elige la forma de entrega.</p>
@@ -34,7 +69,7 @@ console.log(items);
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
-                                    {/* <!-- Item 1 --> */}
+                                    {/* <!-- Items --> */}
                                     {
                                         items.map((item) => {
                                             return (
@@ -44,11 +79,11 @@ console.log(items);
                                                             <img alt={item.product.name} src={item.product.imageUrl} className="w-16 h-16 rounded-lg object-cover" />
                                                             <div>
                                                                 <p className="font-body-md font-bold text-on-surface">{item.product.name}</p>
-                                                                <input className="mt-1 w-full bg-surface-container-lowest border border-white/10 rounded-lg p-2 text-label-sm text-on-surface-variant focus:border-primary-fixed transition-all" placeholder="Nota del producto..." type="text" />
+                                                                <input onChange={(e) => handleItemNoteChange(item.product.id, e.target.value)} className="mt-1 w-full bg-surface-container-lowest border border-white/10 rounded-lg p-2 text-label-sm text-on-surface-variant focus:border-primary-fixed transition-all" placeholder="Nota del producto..." type="text" />
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td className="p-4 font-body-md">{'$'+item.product.price}</td>
+                                                    <td className="p-4 font-body-md">{'$' + item.product.price}</td>
                                                     <td className="p-4">
                                                         <div className="flex items-center justify-center gap-3">
                                                             {/* boton - */}
@@ -73,7 +108,7 @@ console.log(items);
                     </div>
                     <div className="glass-card rounded-xl p-card-padding">
                         <label className="block text-label-md font-bold mb-3 text-on-surface-variant uppercase tracking-wider">Observaciones Generales</label>
-                        <textarea className="w-full bg-[#121212] border border-white/10 rounded-xl p-4 text-body-md text-on-surface focus:ring-2 focus:ring-primary-fixed/20 transition-all resize-none" placeholder="Escribe aquí instrucciones adicionales para tu pedido..."
+                        <textarea onChange={handleCustomerNoteChange}  className="w-full bg-[#121212] border border-white/10 rounded-xl p-4 text-body-md text-on-surface focus:ring-2 focus:ring-primary-fixed/20 transition-all resize-none" placeholder="Escribe aquí instrucciones adicionales para tu pedido..."
                             rows={4}
                         />
                     </div>
@@ -81,51 +116,156 @@ console.log(items);
                 {/* <!-- Right Column: Order Summary (40%) --> */}
                 <aside className="lg:col-span-4 space-y-6">
                     {/* <!-- Delivery Type --> */}
+                    {/* TIPO DE ENTREGA */}
                     <div className="glass-card rounded-xl p-card-padding">
-                        <h3 className="text-label-md font-bold mb-4 text-on-surface-variant uppercase tracking-wider">Tipo de Entrega</h3>
+                        <h3 className="text-label-md font-bold mb-4 text-on-surface-variant uppercase tracking-wider">
+                            Tipo de Entrega
+                        </h3>
                         <div className="space-y-3">
-                            <div className="flex items-center justify-between p-4 rounded-xl border-2 border-primary-fixed bg-primary-fixed/10 cursor-pointer transition-all">
+
+                            {/* Domicilio */}
+                            <div
+                                onClick={() => updateDeliveryType('HOME_DELIVERY')}
+                                className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${deliveryType === 'HOME_DELIVERY'
+                                        ? 'border-primary-fixed bg-primary-fixed/10'   // ← activo
+                                        : 'border-white/10 hover:border-white/20'      // ← inactivo
+                                    }`}
+                            >
                                 <div className="flex items-center gap-3">
-                                    <span className="material-symbols-outlined text-primary-fixed">delivery_dining</span>
+                                    <span className={`material-symbols-outlined ${deliveryType === 'HOME_DELIVERY'
+                                            ? 'text-primary-fixed'
+                                            : 'text-on-surface-variant'
+                                        }`}>
+                                        delivery_dining
+                                    </span>
                                     <div>
-                                        <p className="font-body-md font-bold text-primary-fixed">Domicilio </p>
-                                        <p className="text-label-sm text-on-surface-variant opacity-80">Te lo llevamos</p>
+                                        <p className={`font-body-md font-bold ${deliveryType === DeliveryType.HOME_DELIVERY
+                                                ? 'text-primary-fixed'
+                                                : 'text-on-surface'
+                                            }`}>
+                                            Domicilio
+                                        </p>
+                                        <p className="text-label-sm text-on-surface-variant opacity-80">
+                                            Te lo llevamos
+                                        </p>
                                     </div>
                                 </div>
-                                <div className="w-5 h-5 rounded-full bg-primary-fixed flex items-center justify-center">
-                                    <div className="w-2 h-2 rounded-full bg-on-primary"></div>
+
+                                {/* Radio button visual */}
+                                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${deliveryType === DeliveryType.HOME_DELIVERY
+                                        ? 'bg-primary-fixed border-primary-fixed'
+                                        : 'border-white/20'
+                                    }`}>
+                                    {deliveryType === DeliveryType.HOME_DELIVERY && (
+                                        <div className="w-2 h-2 rounded-full bg-on-primary" />
+                                    )}
                                 </div>
                             </div>
-                            <div className="flex items-center justify-between p-4 rounded-xl border border-white/10 hover:border-white/20 cursor-pointer transition-all">
+
+                            {/* Recoger en tienda */}
+                            <div
+                                onClick={() => updateDeliveryType(DeliveryType.STORE_PICKUP)}
+                                className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${deliveryType === DeliveryType.STORE_PICKUP
+                                        ? 'border-primary-fixed bg-primary-fixed/10'
+                                        : 'border-white/10 hover:border-white/20'
+                                    }`}
+                            >
                                 <div className="flex items-center gap-3">
-                                    <span className="material-symbols-outlined text-on-surface-variant">storefront</span>
+                                    <span className={`material-symbols-outlined ${deliveryType === DeliveryType.STORE_PICKUP
+                                            ? 'text-primary-fixed'
+                                            : 'text-on-surface-variant'
+                                        }`}>
+                                        storefront
+                                    </span>
                                     <div>
-                                        <p className="font-body-md font-bold text-on-surface">Recoger en tienda</p>
-                                        <p className="text-label-sm text-on-surface-variant opacity-60">Recoge cuando quieras</p>
+                                        <p className={`font-body-md font-bold ${deliveryType === DeliveryType.STORE_PICKUP
+                                                ? 'text-primary-fixed'
+                                                : 'text-on-surface'
+                                            }`}>
+                                            Recoger en tienda
+                                        </p>
+                                        <p className="text-label-sm text-on-surface-variant opacity-60">
+                                            Recoge cuando quieras
+                                        </p>
                                     </div>
                                 </div>
-                                <div className="w-5 h-5 rounded-full border border-white/20"></div>
+
+                                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${deliveryType === DeliveryType.STORE_PICKUP
+                                        ? 'bg-primary-fixed border-primary-fixed'
+                                        : 'border-white/20'
+                                    }`}>
+                                    {deliveryType === DeliveryType.STORE_PICKUP && (
+                                        <div className="w-2 h-2 rounded-full bg-on-primary" />
+                                    )}
+                                </div>
                             </div>
+
                         </div>
                     </div>
                     {/* <!-- Payment Method --> */}
+                    {/* MÉTODO DE PAGO */}
                     <div className="glass-card rounded-xl p-card-padding">
-                        <h3 className="text-label-md font-bold mb-4 text-on-surface-variant uppercase tracking-wider">Método de Pago</h3>
+                        <h3 className="text-label-md font-bold mb-4 text-on-surface-variant uppercase tracking-wider">
+                            Método de Pago
+                        </h3>
                         <div className="grid grid-cols-1 gap-3">
-                            <div className="flex items-center gap-3 p-4 rounded-xl border border-white/10 hover:border-primary-fixed/30 cursor-pointer transition-all bg-white/5">
-                                <span className="material-symbols-outlined text-on-surface-variant">payments</span>
-                                <div>
-                                    <p className="font-body-md font-bold text-on-surface">Efectivo</p>
-                                    <p className="text-label-sm text-on-surface-variant opacity-60">Paga al recibir</p>
+
+                            {/* Efectivo */}
+                            <div
+                                onClick={() => updatePaymentMethod(PaymentMethod.CASH)}
+                                className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${paymentMethod === PaymentMethod.CASH
+                                        ? 'border-primary-fixed bg-primary-fixed/10'
+                                        : 'border-white/10 bg-white/5 hover:border-primary-fixed/30'
+                                    }`}
+                            >
+                                <span className={`material-symbols-outlined ${paymentMethod === PaymentMethod.CASH ? 'text-primary-fixed' : 'text-on-surface-variant'
+                                    }`}>
+                                    payments
+                                </span>
+                                <div className="flex-1">
+                                    <p className={`font-body-md font-bold ${paymentMethod === PaymentMethod.CASH ? 'text-primary-fixed' : 'text-on-surface'
+                                        }`}>
+                                        Efectivo
+                                    </p>
+                                    <p className="text-label-sm text-on-surface-variant opacity-60">
+                                        Paga al recibir
+                                    </p>
                                 </div>
+                                {paymentMethod === PaymentMethod.CASH && (
+                                    <span className="material-symbols-outlined text-primary-fixed text-xl">
+                                        check_circle
+                                    </span>
+                                )}
                             </div>
-                            <div className="flex items-center gap-3 p-4 rounded-xl border border-white/10 hover:border-primary-fixed/30 cursor-pointer transition-all bg-white/5">
-                                <span className="material-symbols-outlined text-on-surface-variant">account_balance_wallet</span>
-                                <div>
-                                    <p className="font-body-md font-bold text-on-surface">Transferencia</p>
-                                    <p className="text-label-sm text-on-surface-variant opacity-60">Nequi · PSE · QR</p>
+
+                            {/* Transferencia */}
+                            <div
+                                onClick={() => updatePaymentMethod(PaymentMethod.TRANSFER)}
+                                className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${paymentMethod === PaymentMethod.TRANSFER
+                                        ? 'border-primary-fixed bg-primary-fixed/10'
+                                        : 'border-white/10 bg-white/5 hover:border-primary-fixed/30'
+                                    }`}
+                            >
+                                <span className={`material-symbols-outlined ${paymentMethod === PaymentMethod.TRANSFER ? 'text-primary-fixed' : 'text-on-surface-variant'
+                                    }`}>
+                                    account_balance_wallet
+                                </span>
+                                <div className="flex-1">
+                                    <p className={`font-body-md font-bold ${paymentMethod === PaymentMethod.TRANSFER ? 'text-primary-fixed' : 'text-on-surface'
+                                        }`}>
+                                        Transferencia
+                                    </p>
+                                    <p className="text-label-sm text-on-surface-variant opacity-60">
+                                        Nequi · PSE · QR
+                                    </p>
                                 </div>
+                                {paymentMethod === PaymentMethod.TRANSFER && (
+                                    <span className="material-symbols-outlined text-primary-fixed text-xl">
+                                        check_circle
+                                    </span>
+                                )}
                             </div>
+
                         </div>
                     </div>
                     {/* <!-- Total Breakdown --> */}
