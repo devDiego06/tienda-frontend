@@ -45,14 +45,17 @@ export interface CartItem {
 
 
 export interface Order {
-  id: string;
-  client: string;
-  status: 'Preparando' | 'En Ruta' | 'Entregado';
-  statusColor: 'tertiary' | 'amber' | 'green';
-  timeline: number;
-  total: string;
-  pulse?: boolean;
-}
+  storeId: string;
+  items: {
+    productId: string;
+    quantity: number;
+    itemNote?: string;
+  }[];
+  deliveryType: 'HOME_DELIVERY' | 'STORE_PICKUP';
+  paymentMethod: 'CASH' | 'TRANSFER';
+  customerNote?: string;
+  }
+
 
 export interface NavItem {
   path: string;

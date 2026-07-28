@@ -10,8 +10,10 @@ export const DeliveryType = {
 export const PaymentMethod = {
   CASH: 'CASH',
   TRANSFER: 'TRANSFER'
-};
+} as const;
 
+
+//tipo de delivery y metodo de pago que se puede usar en el carrito
 export type DeliveryTypeValue = typeof DeliveryType[keyof typeof DeliveryType];
 export type PaymentMethodValue = typeof PaymentMethod[keyof typeof PaymentMethod];
 
@@ -19,12 +21,16 @@ interface CartState {
   items: CartItem[];
   setItems: (items: CartItem[]) => void;
   clearCart: () => void;
-  deliveryType?: DeliveryTypeValue;
-  setDeliveryType: (type: DeliveryTypeValue) => void;
-  paymentMethod?: PaymentMethodValue;
-  setPaymentMethod: (method: PaymentMethodValue) => void;
+
+  deliveryType?: DeliveryTypeValue | null;
+  setDeliveryType: (type: DeliveryTypeValue | null) => void;
+
+  paymentMethod?: PaymentMethodValue | null;
+  setPaymentMethod: (method: PaymentMethodValue | null) => void;
+
   customerNote?: string;
   setCustomerNote: (note: string) => void;
+
   itemNotes: Record<string, string>;
   setItemNotes: (notes: Record<string, string>) => void;
 
@@ -36,14 +42,14 @@ export const useCartStore = create<CartState>()(
       items: [],
       setItems: (items) => set({ items }),
       clearCart: () => {
-        set({ items: [] });
+        set({ items: [], deliveryType: null, paymentMethod: null, customerNote: '', itemNotes: {} });
         localStorage.removeItem('cart-storage');
       },
-      deliveryType: undefined,
+      deliveryType: null,
       setDeliveryType: (type) => set({ deliveryType: type }),
-      paymentMethod: undefined,
+      paymentMethod: null,
       setPaymentMethod: (method) => set({ paymentMethod: method }),
-      customerNote: undefined,
+      customerNote: '',
       setCustomerNote: (note) => set({ customerNote: note }),
       itemNotes: {},
       setItemNotes: (notes) => set({ itemNotes: notes }),

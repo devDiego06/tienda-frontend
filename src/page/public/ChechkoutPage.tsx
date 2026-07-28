@@ -2,33 +2,59 @@ import { formatCurrency } from "../../helpers";
 import { useCart } from "../../hooks/useCart";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { DeliveryType, PaymentMethod } from "../../store/Cart.store";
+import { DeliveryType, PaymentMethod, useCartStore } from "../../store/Cart.store";
+import { orderApi } from "../../api/order/order.api";
+import type { CreateOrderRequest } from "../../api/order/order.api";
 
 export default function ChechkoutPage() {
 
+    //store ID
+    const VITE_STORE_ID = import.meta.env.VITE_STORE_ID;
+    const navigate = useNavigate();
     const { items, totalPrice, subtotal, updateDeliveryType, updatePaymentMethod, updateNote, deliveryType, paymentMethod, customerNote, setCustomerNote } = useCart();
+    const { clearCart } = useCartStore();
+
+   
+    const handleSubmitOrder = () => {
+
+        if(items.length === 0 || !deliveryType || !paymentMethod) {
+            alert("Por favor, completa todos los campos antes de realizar el pedido.");
+            return;
+        }
+
+        //pasamos la informacion para enviar a la api, para crear el pedido
+        const orderData: CreateOrderRequest & { storeId: string;} = {
+            storeId: VITE_STORE_ID,
+            items: items.map((item) => ({
+                productId: item.product.id,
+                quantity: item.quantity,
+                ...(item.itemNote ? { itemNote: item.itemNote } : {}),
+            })),
+            deliveryType,
+            paymentMethod,
+            customerNote,
+        }
+
+        orderApi.create(orderData);
+        
+        //limpiamos el carrito
+        clearCart();
+        setCustomerNote('');
+        updateNote('', '');
+        updateDeliveryType(null);
+        updatePaymentMethod(null);
+        navigate('/catalogo');
+
+
+    }
     
 
-    //pasamos la informacion para enviar a la api, para crear el pedido
-    const orderData = {
-        storeId: '',
-        items: items.map((item) => ({
-            productId: item.product.id,
-            quantity: item.quantity,
-            ...(item.itemNote ? { itemNote: item.itemNote } : {}),
-        })),
-        deliveryType: deliveryType,
-        paymentMethod: paymentMethod,
-        customerNote: customerNote,
-        totalPrice: totalPrice + 2000, // Adding delivery cost
-    }
-
-    const navigate = useNavigate();
-
+    //se actualiza la nota del producto en el carrito, para que se pueda enviar a la api
     const handleItemNoteChange = (productId: string, itemNote: string) => {
         updateNote(productId, itemNote);
     }
 
+    //se actualiza la nota del cliente en el carrito, para que se pueda enviar a la api
     const handleCustomerNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setCustomerNote(e.target.value);
     };
@@ -40,10 +66,6 @@ export default function ChechkoutPage() {
             navigate('/catalogo', { replace: true });
         }
     }, [items.length, navigate]);
-
-    console.log(orderData);
-    
-
 
     return (
         <main className="pt-24 pb-32 px-4 md:px-margin max-w-375 mx-auto min-h-screen">
@@ -286,7 +308,7 @@ export default function ChechkoutPage() {
                                 <span className="font-extrabold text-headline-lg">Total</span>
                                 <span className=" font-extrabold text-headline-lg text-primary-fixed">{formatCurrency(totalPrice + 2000)}</span>
                             </div>
-                            <button className="w-full mt-6 bg-primary-fixed text-on-primary py-4 rounded-xl font-bold text-[18px] hover:brightness-110 hover:shadow-[0_0_20px_rgba(195,244,0,0.3)] transition-all active:scale-[0.98]">
+                            <button onClick={handleSubmitOrder} className="w-full mt-6 bg-primary-fixed text-on-primary py-4 rounded-xl font-bold text-[18px] hover:brightness-110 hover:shadow-[0_0_20px_rgba(195,244,0,0.3)] transition-all active:scale-[0.98]">
                                 Realizar Pedido
                             </button>
                         </div>

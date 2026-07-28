@@ -3,7 +3,7 @@ import { useCartStore } from "../store/Cart.store";
 import type { Product } from "../types";
 
 export function useCart() {
-    const { items, setItems, clearCart } = useCartStore();
+    const { items, setItems, clearCart,  } = useCartStore();
     const deliveryType = useCartStore((state) => state.deliveryType);
     const paymentMethod = useCartStore((state) => state.paymentMethod);
     const updateDeliveryType = useCartStore((state) => state.setDeliveryType);
@@ -32,6 +32,7 @@ export function useCart() {
         const nextQuantity = existingItem.quantity + delta;
 
         if (nextQuantity <= 0) {
+            clearCart();
             return removeFromCart(productId);
         }
 
